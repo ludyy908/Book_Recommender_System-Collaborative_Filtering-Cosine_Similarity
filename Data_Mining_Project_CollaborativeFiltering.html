@@ -14579,7 +14579,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Book-Recommendation-for-Readers">Book Recommendation for Readers<a class="anchor-link" href="#Book-Recommendation-for-Readers">&#182;</a></h1><h3 id="By-Ludmila-Mucavele">By Ludmila Mucavele<a class="anchor-link" href="#By-Ludmila-Mucavele">&#182;</a></h3>
+<h1 id="Book-Recommendation-for-Readers---KNN-Collaborative-Filtering">Book Recommendation for Readers - KNN Collaborative Filtering<a class="anchor-link" href="#Book-Recommendation-for-Readers---KNN-Collaborative-Filtering">&#182;</a></h1><h3 id="By-Ludmila-Em%C3%ADlia-Mucavele">By Ludmila Em&#237;lia Mucavele<a class="anchor-link" href="#By-Ludmila-Em%C3%ADlia-Mucavele">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -14594,8 +14594,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <li><a href="#1">Dataset Introduction</a></li>
 <li><a href="#2">Data Gathering and Cleaning</a></li>
 <li><a href="#3">Exploratory Data Analysis</a></li>
-<li><a href="#4">Collaborative filtering based on books Similarity</a><ul>
-<li><a href="#4.1">4.1. Collaborative Filtering using Cosine Similarity</a></li>
+<li><a href="#4">Item-based Collaborative Filtering</a><ul>
+<li><a href="#4.1">4.1. Collaborative Filtering using K-Nearest Neighbors</a></li>
 </ul>
 </li>
 </ol>
@@ -14651,7 +14651,6 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">cosine_similarity</span>
 </pre></div>
 
      </div>
@@ -14705,7 +14704,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>C:\Users\ludmi\AppData\Local\Temp\ipykernel_14932\3308639499.py:1: DtypeWarning: Columns (3) have mixed types. Specify dtype option on import or set low_memory=False.
+<pre>C:\Users\ludmi\AppData\Local\Temp\ipykernel_11384\3308639499.py:1: DtypeWarning: Columns (3) have mixed types. Specify dtype option on import or set low_memory=False.
   books = pd.read_csv(&#39;./Data/Books.csv&#39;, usecols = [&#39;ISBN&#39;, &#39;Book-Title&#39;, &#39;Book-Author&#39;, &#39;Year-Of-Publication&#39;, &#39;Publisher&#39;])
 </pre>
 </div>
@@ -15119,7 +15118,7 @@ class="
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><a id = 4></a></p>
-<h2 id="4.-Collaborative-filtering-based-on-books-Similarity">4. Collaborative filtering based on books Similarity<a class="anchor-link" href="#4.-Collaborative-filtering-based-on-books-Similarity">&#182;</a></h2><p>Collaborative Filtering tend to find similar users and recommend what similar users like. In this type of recommendation system,  we classify the users into the clusters of similar types, and recommend each user according to the preference of its cluster.</p>
+<h2 id="4.-Item-based-Collaborative-Filtering">4. Item-based Collaborative Filtering<a class="anchor-link" href="#4.-Item-based-Collaborative-Filtering">&#182;</a></h2><p>The Item-based collaborative filtering will use the patterns of users who rated the same books to recommend another books, whom the user might like to read.</p>
 <p>The data set to be used set consists of all the ratings made by the users/readers in the data set, so as the year of publication of the books and their average rating.</p>
 <p>The data has too many data points. To reduce the time performance and memory usage, it will only be used data from books with 50 or more ratings.</p>
 
@@ -15465,7 +15464,7 @@ class="
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The dataset has been filtered. For the collaborative filtering, it will be necessary to create user-item table, which represents the interaction between user and books based on the ratings given, and there will be some additional data to take in account when determining the cosine similarity.</p>
+<p>The dataset has been filtered. For the collaborative filtering, it will be necessary to create user-item table, which represents the interaction between user and books based on the ratings given, and there will be some additional data to take in account when determining similar books.</p>
 
 </div>
 </div>
@@ -15581,6 +15580,7 @@ class="
 <span class="n">user_book</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">user_book</span> <span class="o">=</span> <span class="n">data2merge</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">user_book</span><span class="p">,</span> <span class="n">on</span> <span class="o">=</span> <span class="s1">&#39;Book-Title&#39;</span><span class="p">,</span> <span class="n">how</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span><span class="p">)</span>
 <span class="n">user_book</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Book-Title&#39;</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">user_book</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="n">user_book</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -15595,6 +15595,18 @@ class="
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>(257, 13756)
+</pre>
+</div>
+</div>
 
 <div class="jp-OutputArea-child">
 
@@ -15809,20 +15821,8 @@ class="
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Having created the matrix pivot table, we go to the next step.</p>
+<p>Having created the matrix pivot table, we go to the next step, that is to transform the values of the dataframe into a scipy sparse matrix for more efficient calculations.</p>
 
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><a id = 4.1></a></p>
-<h3 id="4.1.-Collaborative-Filtering-using-Cosine-Similarity">4.1. Collaborative Filtering using Cosine Similarity<a class="anchor-link" href="#4.1.-Collaborative-Filtering-using-Cosine-Similarity">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -15834,11 +15834,11 @@ class="
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collaborative filtering using cosine similarity</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span>
 
-<span class="n">similarity_data</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">user_book</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">similarity_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">similarity_data</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span>
+<span class="c1"># creating the sparse matrix</span>
+<span class="n">user_book_matrix</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">(</span><span class="n">user_book</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">user_book_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -15860,72 +15860,66 @@ class="
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>(257, 257)
+<pre>(257, 13756)
 </pre>
 </div>
 </div>
 
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><a id = 4.1></a></p>
+<h3 id="4.1.-Collaborative-Filtering-using-K-Nearest-Neighbors">4.1. Collaborative Filtering using K-Nearest Neighbors<a class="anchor-link" href="#4.1.-Collaborative-Filtering-using-K-Nearest-Neighbors">&#182;</a></h3><h4 id="Fitting-the-Model">Fitting the Model<a class="anchor-link" href="#Fitting-the-Model">&#182;</a></h4><p>To implement the model, it'll be initialized the <code>NearestNeighbors</code> class as <code>model</code> and it will be fitted the sparse matrix to the instance. The metric to use is cosine similarity, specified by <code>metric = cosine</code> for the model to measure similarity between vectors using cosine similarity.</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># collaborative filtering using KNN</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">NearestNeighbors</span>
+
+<span class="c1"># apply knn to find similar book</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span><span class="n">metric</span> <span class="o">=</span> <span class="s1">&#39;cosine&#39;</span><span class="p">,</span> <span class="n">algorithm</span> <span class="o">=</span> <span class="s1">&#39;brute&#39;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">user_book_matrix</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[17]:</div>
 
 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>array([0.99574363, 0.99695411, 0.99715042, 0.99609235, 0.99761276,
-       1.        , 0.9976571 , 0.9974478 , 0.99755553, 0.99758718,
-       0.99581241, 0.99728627, 0.99719775, 0.99753136, 0.99769129,
-       0.9948791 , 0.99743091, 0.99230545, 0.99657082, 0.9967987 ,
-       0.99651201, 0.99493367, 0.99773009, 0.9975477 , 0.99663227,
-       0.9976131 , 0.99769338, 0.99556286, 0.99393316, 0.9971955 ,
-       0.99708425, 0.99777057, 0.99753   , 0.99731908, 0.99704588,
-       0.99745124, 0.99753414, 0.99772756, 0.99734612, 0.99735352,
-       0.99720116, 0.99771205, 0.99743806, 0.99672889, 0.9969545 ,
-       0.99765471, 0.99742928, 0.9972956 , 0.99737111, 0.99762996,
-       0.99656939, 0.99725245, 0.99779597, 0.99751547, 0.99768456,
-       0.99712648, 0.99771585, 0.99762988, 0.99758858, 0.99763699,
-       0.99630493, 0.99625905, 0.99776986, 0.99756406, 0.99737074,
-       0.99693588, 0.9975353 , 0.99769734, 0.99774058, 0.99771714,
-       0.99712342, 0.99764846, 0.99701688, 0.99492383, 0.9964607 ,
-       0.99689523, 0.99620769, 0.99720036, 0.99772773, 0.99773119,
-       0.99739011, 0.99747134, 0.99760942, 0.99674354, 0.99630172,
-       0.9977406 , 0.99730128, 0.99769339, 0.99684327, 0.99771043,
-       0.99769228, 0.99753406, 0.99751821, 0.9977131 , 0.99689897,
-       0.99749672, 0.99757437, 0.99643491, 0.99760399, 0.99502788,
-       0.99756237, 0.99652573, 0.99764519, 0.99776238, 0.99721798,
-       0.99764993, 0.99766885, 0.99760274, 0.99770163, 0.99747769,
-       0.99522852, 0.99728192, 0.99772285, 0.99713034, 0.99735475,
-       0.99722636, 0.99775544, 0.99768055, 0.99773906, 0.99756495,
-       0.99772851, 0.99722938, 0.99776965, 0.99768717, 0.99773319,
-       0.99724967, 0.9975926 , 0.99733898, 0.99757711, 0.99778959,
-       0.99774203, 0.99770144, 0.99684247, 0.997428  , 0.99768231,
-       0.99776504, 0.99724558, 0.99773316, 0.99740623, 0.99557619,
-       0.99502437, 0.99725014, 0.99577612, 0.99598886, 0.99728216,
-       0.99757399, 0.99764235, 0.99774404, 0.99767437, 0.99743754,
-       0.99761495, 0.99776783, 0.99776385, 0.99760947, 0.99766562,
-       0.99759471, 0.99523442, 0.9972504 , 0.99765538, 0.99773249,
-       0.99773356, 0.9977831 , 0.99771249, 0.99759164, 0.99770533,
-       0.99727682, 0.99763034, 0.99558155, 0.9976884 , 0.99770869,
-       0.99769511, 0.99768733, 0.99775676, 0.99766683, 0.99772309,
-       0.99755169, 0.99767918, 0.99758629, 0.99736758, 0.99776898,
-       0.99765672, 0.99764862, 0.99769033, 0.99719781, 0.9977347 ,
-       0.99726749, 0.99767579, 0.99746779, 0.997718  , 0.99698813,
-       0.99719114, 0.99781156, 0.99630727, 0.99772399, 0.99771792,
-       0.99621785, 0.99757465, 0.99766424, 0.99757785, 0.99763236,
-       0.99770713, 0.99775513, 0.99752938, 0.99776865, 0.9975266 ,
-       0.99769035, 0.99775466, 0.99487569, 0.99772972, 0.99628123,
-       0.99771387, 0.99767238, 0.99771999, 0.99766947, 0.99762181,
-       0.99766745, 0.99768118, 0.99754928, 0.99775487, 0.99763577,
-       0.99772973, 0.99773941, 0.99754584, 0.99762583, 0.99757039,
-       0.99717964, 0.9975954 , 0.99765477, 0.99772828, 0.99751376,
-       0.99772376, 0.99771156, 0.99779723, 0.99775931, 0.99487576,
-       0.99753579, 0.99769151, 0.99752422, 0.99769219, 0.9977071 ,
-       0.997699  , 0.99765608, 0.99774318, 0.99770444, 0.99772514,
-       0.9977196 , 0.99771591, 0.99783212, 0.99773706, 0.99770416,
-       0.99763745, 0.99767824, 0.99770578, 0.99752606, 0.99774448,
-       0.99781774, 0.99781055])</pre>
+<pre>NearestNeighbors(algorithm=&#39;brute&#39;, metric=&#39;cosine&#39;)</pre>
 </div>
 
 </div>
@@ -15952,20 +15946,20 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Now let&#39;s write a function, that will take a Book as an input and will return you 5 books as in recommendation</span>
-
-<span class="k">def</span> <span class="nf">getRecommendation</span><span class="p">(</span><span class="n">book_name</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">getRecommendation</span><span class="p">(</span><span class="n">book_name</span><span class="p">):</span>
     <span class="c1"># fetching the index of the book </span>
     <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">user_book</span><span class="o">.</span><span class="n">index</span><span class="o">==</span><span class="n">book_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="c1"># get books with the higher similarity except itself</span>
-    <span class="n">similar_books</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">similarity_data</span><span class="p">[</span><span class="n">index</span><span class="p">])),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;5 Books Recommended based on this Book:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">similar_books</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">user_book</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_book</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">]))</span>    <span class="c1"># as to get the index of the most similar items</span>
+    <span class="c1"># get books with the higher similarity except itself</span>
+    <span class="n">distances</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="n">user_book</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="n">distances</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;5 Books Recommended based on </span><span class="si">{0}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">book_name</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">user_book</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_book</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">]))</span>
 </pre></div>
 
      </div>
@@ -15980,8 +15974,7 @@ class="
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Finally, we can write the book title and load to see the recommendation.</p>
-
+<h4 id="Finally,-we-can-write-the-book-title-and-load-to-see-the-recommendation-above.">Finally, we can write the book title and load to see the recommendation above.<a class="anchor-link" href="#Finally,-we-can-write-the-book-title-and-load-to-see-the-recommendation-above.">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -15990,7 +15983,7 @@ class="
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">getRecommendation</span><span class="p">(</span><span class="s1">&#39;The Catcher in the Rye&#39;</span><span class="p">)</span>
@@ -16015,7 +16008,7 @@ class="
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>5 Books Recommended based on this Book:
+<pre>5 Books Recommended based on The Catcher in the Rye:
 
 Candide (Penguin Classics), 1990
 The Jungle (Bantam Classics), 1981
